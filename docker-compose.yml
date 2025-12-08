@@ -1,0 +1,71 @@
+version: "3.8"
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: shop-postgres
+    environment:
+      POSTGRES_USER: shopowner
+      POSTGRES_PASSWORD: shopowner123
+      POSTGRES_DB: shop_management
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - shop-network
+
+  # NestJS Backend
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: shop-backend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    environment:
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      DATABASE_USER: shopowner
+      DATABASE_PASSWORD: shopowner123
+      DATABASE_NAME: shop_management
+      JWT_SECRET: your-secret-key-change-in-production
+      NODE_ENV: development
+    depends_on:
+      - postgres
+    networks:
+      - shop-network
+    command: npm run start:dev
+
+  # Nuxt.js Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: shop-frontend
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.nuxt
+    environment:
+      API_BASE_URL: http://localhost:3000
+      NUXT_HOST: 0.0.0.0
+      NUXT_PORT: 3001
+    depends_on:
+      - backend
+    networks:
+      - shop-network
+    command: npm run dev
+
+volumes:
+  postgres_data:
+
+networks:
+  shop-network:
+    driver: bridge

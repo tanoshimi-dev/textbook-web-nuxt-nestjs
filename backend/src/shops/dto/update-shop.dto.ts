@@ -1,0 +1,28 @@
+import { IsString, IsOptional, IsEmail, IsEnum } from 'class-validator';
+import { ShopStatus } from '../entities/shop.entity';
+
+export class UpdateShopDto {
+  @IsOptional()
+  @IsString()
+  name?: string;
+
+  @IsOptional()
+  @IsString()
+  description?: string;
+
+  @IsOptional()
+  @IsString()
+  address?: string;
+
+  @IsOptional()
+  @IsString()
+  phoneNumber?: string;
+
+  @IsOptional()
+  @IsEmail()
+  email?: string;
+
+  @IsOptional()
+  @IsEnum(ShopStatus)
+  status?: ShopStatus;
+}
