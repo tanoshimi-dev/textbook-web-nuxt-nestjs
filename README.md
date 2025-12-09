@@ -45,7 +45,7 @@ Before you begin, ensure you have installed:
 ### 1. Clone or Navigate to the Project
 
 ```bash
-cd E:\dev\zed_projects\learning\textbook-web-nestjs
+cd xxx\learning\textbook-web-nestjs
 ```
 
 ### 2. Start the Application
