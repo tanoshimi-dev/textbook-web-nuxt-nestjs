@@ -15,5 +15,16 @@ export default defineNuxtConfig({
     port: 3001,
   },
 
+  vite: {
+    resolve: {
+      alias: {
+        "form-data": "form-data",
+      },
+    },
+    optimizeDeps: {
+      include: ["axios"],
+    },
+  },
+
   compatibilityDate: "2024-11-01",
 });

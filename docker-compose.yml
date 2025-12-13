@@ -26,7 +26,7 @@ services:
       - "3000:3000"
     volumes:
       - ./backend:/app
-      - /app/node_modules
+      - backend_node_modules:/app/node_modules
     environment:
       DATABASE_HOST: postgres
       DATABASE_PORT: 5432
@@ -51,8 +51,8 @@ services:
       - "3001:3001"
     volumes:
       - ./frontend:/app
-      - /app/node_modules
-      - /app/.nuxt
+      - frontend_node_modules:/app/node_modules
+      - frontend_nuxt:/app/.nuxt
     environment:
       API_BASE_URL: http://localhost:3000
       NUXT_HOST: 0.0.0.0
@@ -63,8 +63,29 @@ services:
       - shop-network
     command: npm run dev
 
+  # pgAdmin - Database Viewer
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: shop-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@shop.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      - postgres
+    networks:
+      - shop-network
+
 volumes:
   postgres_data:
+  backend_node_modules:
+  frontend_node_modules:
+  frontend_nuxt:
+  pgadmin_data:
 
 networks:
   shop-network:
