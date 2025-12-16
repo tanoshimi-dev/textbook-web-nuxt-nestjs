@@ -1,6 +1,7 @@
 <template>
-    <div class="min-h-screen bg-gray-300">
-        <nav class="bg-white shadow-lg m-4">
+    <div class="min-h-screen">
+        <h1 class="text-3xl font-bold underline">Hello world</h1>
+        <nav class="bg-gray-100 shadow-lg m-4">
             <div class="max-w-7xl mx-auto px-4">
                 <div class="flex justify-between items-center h-16">
                     <div class="flex items-center">

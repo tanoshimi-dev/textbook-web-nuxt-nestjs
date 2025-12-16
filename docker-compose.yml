@@ -1,92 +1,95 @@
 version: "3.8"
 
 services:
-  # PostgreSQL Database
-  postgres:
-    image: postgres:15-alpine
-    container_name: shop-postgres
-    environment:
-      POSTGRES_USER: shopowner
-      POSTGRES_PASSWORD: shopowner123
-      POSTGRES_DB: shop_management
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    networks:
-      - shop-network
+    # PostgreSQL Database
+    postgres:
+        image: postgres:15-alpine
+        container_name: shop-postgres
+        environment:
+            POSTGRES_USER: shopowner
+            POSTGRES_PASSWORD: shopowner123
+            POSTGRES_DB: shop_management
+        ports:
+            - "5432:5432"
+        volumes:
+            - postgres_data:/var/lib/postgresql/data
+        networks:
+            - shop-network
 
-  # NestJS Backend
-  backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    container_name: shop-backend
-    ports:
-      - "3000:3000"
-    volumes:
-      - ./backend:/app
-      - backend_node_modules:/app/node_modules
-    environment:
-      DATABASE_HOST: postgres
-      DATABASE_PORT: 5432
-      DATABASE_USER: shopowner
-      DATABASE_PASSWORD: shopowner123
-      DATABASE_NAME: shop_management
-      JWT_SECRET: your-secret-key-change-in-production
-      NODE_ENV: development
-    depends_on:
-      - postgres
-    networks:
-      - shop-network
-    command: npm run start:dev
+    # NestJS Backend
+    backend:
+        build:
+            context: ./backend
+            dockerfile: Dockerfile
+        container_name: shop-backend
+        ports:
+            - "3000:3000"
+        volumes:
+            - ./backend:/app
+            - backend_node_modules:/app/node_modules
+        environment:
+            DATABASE_HOST: postgres
+            DATABASE_PORT: 5432
+            DATABASE_USER: shopowner
+            DATABASE_PASSWORD: shopowner123
+            DATABASE_NAME: shop_management
+            JWT_SECRET: your-secret-key-change-in-production
+            NODE_ENV: development
+            CHOKIDAR_USEPOLLING: "true"
+            WATCHPACK_POLLING: "true"
+        depends_on:
+            - postgres
+        networks:
+            - shop-network
+        command: npm run start:dev
 
-  # Nuxt.js Frontend
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    container_name: shop-frontend
-    ports:
-      - "3001:3001"
-    volumes:
-      - ./frontend:/app
-      - frontend_node_modules:/app/node_modules
-      - frontend_nuxt:/app/.nuxt
-    environment:
-      API_BASE_URL: http://localhost:3000
-      NUXT_HOST: 0.0.0.0
-      NUXT_PORT: 3001
-    depends_on:
-      - backend
-    networks:
-      - shop-network
-    command: npm run dev
+    # Nuxt.js Frontend
+    frontend:
+        build:
+            context: ./frontend
+            dockerfile: Dockerfile
+        container_name: shop-frontend
+        ports:
+            - "3001:3001"
+        volumes:
+            - ./frontend:/app
+            - frontend_node_modules:/app/node_modules
+            - frontend_nuxt:/app/.nuxt
+        environment:
+            API_BASE_URL: http://localhost:3000
+            NUXT_HOST: 0.0.0.0
+            NUXT_PORT: 3001
+            CHOKIDAR_USEPOLLING: "true"
+        depends_on:
+            - backend
+        networks:
+            - shop-network
+        command: npm run dev
 
-  # pgAdmin - Database Viewer
-  pgadmin:
-    image: dpage/pgadmin4:latest
-    container_name: shop-pgadmin
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@shop.com
-      PGADMIN_DEFAULT_PASSWORD: admin123
-      PGADMIN_CONFIG_SERVER_MODE: "False"
-    ports:
-      - "5050:80"
-    volumes:
-      - pgadmin_data:/var/lib/pgadmin
-    depends_on:
-      - postgres
-    networks:
-      - shop-network
+    # pgAdmin - Database Viewer
+    pgadmin:
+        image: dpage/pgadmin4:latest
+        container_name: shop-pgadmin
+        environment:
+            PGADMIN_DEFAULT_EMAIL: admin@shop.com
+            PGADMIN_DEFAULT_PASSWORD: admin123
+            PGADMIN_CONFIG_SERVER_MODE: "False"
+        ports:
+            - "5050:80"
+        volumes:
+            - pgadmin_data:/var/lib/pgadmin
+        depends_on:
+            - postgres
+        networks:
+            - shop-network
 
 volumes:
-  postgres_data:
-  backend_node_modules:
-  frontend_node_modules:
-  frontend_nuxt:
-  pgadmin_data:
+    postgres_data:
+    backend_node_modules:
+    frontend_node_modules:
+    frontend_nuxt:
+    pgadmin_data:
 
 networks:
-  shop-network:
-    driver: bridge
+    shop-network:
+        driver: bridge

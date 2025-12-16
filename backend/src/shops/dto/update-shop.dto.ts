@@ -1,5 +1,11 @@
-import { IsString, IsOptional, IsEmail, IsEnum } from 'class-validator';
-import { ShopStatus } from '../entities/shop.entity';
+import {
+  IsString,
+  IsOptional,
+  IsEmail,
+  IsEnum,
+  ValidateIf,
+} from "class-validator";
+import { ShopStatus } from "../entities/shop.entity";
 
 export class UpdateShopDto {
   @IsOptional()
@@ -19,6 +25,7 @@ export class UpdateShopDto {
   phoneNumber?: string;
 
   @IsOptional()
+  @ValidateIf((o) => o.email !== "" && o.email !== null)
   @IsEmail()
   email?: string;
 
